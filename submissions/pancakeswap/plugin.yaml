@@ -21,8 +21,9 @@ components:
 build:
   lang: rust
   binary_name: pancakeswap
-  source_repo: skylavis-sky/pancakeswap
-  source_commit: "20556dff45fbd52a09c6aac12ce0613c57c2c7e8"
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "5ab6dcaf5ed7455c89307a03cfc8189f4dcb46f9"
+  source_dir: pancakeswap
 
 api_calls:
   - "https://bsc-rpc.publicnode.com"
