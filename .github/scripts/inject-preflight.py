@@ -65,7 +65,14 @@ if not any([needs_onchainos, needs_binary, needs_pip, needs_npm]):
     sys.exit(0)
 
 # Check what existing pre-flight already installs
-has_onchainos_install = bool(re.search(r"install.*onchainos|curl.*onchainos.*install|skills add.*onchainos", skill_text, re.I))
+# Only match actual install commands, not doc references like "Install via onchainos upgrade"
+has_onchainos_install = bool(re.search(
+    r"curl.*onchainos.*install\.sh|"
+    r"skills add.*onchainos|"
+    r"onchainos.*install\.sh\s*\|\s*sh|"
+    r"brew install.*onchainos",
+    skill_text, re.I
+))
 has_binary_install = bool(re.search(r"curl.*releases/download|wget.*releases/download", skill_text, re.I))
 has_pip_install = bool(re.search(r"pip3? install", skill_text, re.I))
 has_npm_install = bool(re.search(r"npm install -g", skill_text, re.I))
