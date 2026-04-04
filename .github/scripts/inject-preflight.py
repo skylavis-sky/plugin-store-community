@@ -64,18 +64,24 @@ if not any([needs_onchainos, needs_binary, needs_pip, needs_npm]):
     print("No dependencies detected, skipping")
     sys.exit(0)
 
-# Check what existing pre-flight already installs
+# Check what the DEVELOPER's pre-flight already installs
+# Strip out any previous auto-injected block so we don't count our own injections
+dev_skill_text = re.sub(
+    r"## Pre-flight Dependencies \(auto-injected by Plugin Store CI\).*?---\n",
+    "", skill_text, flags=re.DOTALL
+)
+
 # Only match actual install commands, not doc references like "Install via onchainos upgrade"
 has_onchainos_install = bool(re.search(
     r"curl.*onchainos.*install\.sh|"
     r"skills add.*onchainos|"
     r"onchainos.*install\.sh\s*\|\s*sh|"
     r"brew install.*onchainos",
-    skill_text, re.I
+    dev_skill_text, re.I
 ))
-has_binary_install = bool(re.search(r"curl.*releases/download|wget.*releases/download", skill_text, re.I))
-has_pip_install = bool(re.search(r"pip3? install", skill_text, re.I))
-has_npm_install = bool(re.search(r"npm install -g", skill_text, re.I))
+has_binary_install = bool(re.search(r"curl.*releases/download|wget.*releases/download", dev_skill_text, re.I))
+has_pip_install = bool(re.search(r"pip3? install", dev_skill_text, re.I))
+has_npm_install = bool(re.search(r"npm install -g", dev_skill_text, re.I))
 
 # Build injection block
 parts = []
