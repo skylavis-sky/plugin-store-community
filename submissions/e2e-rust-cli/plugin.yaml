@@ -1,7 +1,7 @@
 schema_version: 1
 name: e2e-rust-cli
-version: "1.0.2"
-description: "E2E test plugin: Rust echo CLI"
+version: "1.0.3"
+description: "E2E test plugin: Rust CLI with onchainos price query"
 author:
   name: "yz06276"
   github: "yz06276"
@@ -14,7 +14,7 @@ components:
 build:
   lang: rust
   source_repo: yz06276/e2e-rust-cli
-  source_commit: "b41beb45d4060ddf13d3aedfcaf7dd421009a771"
+  source_commit: "feeb3eec2d84edb7b3bd8444ca00ef5015d7d6ee"
   source_dir: "."
   binary_name: e2e-rust-cli
 api_calls: []

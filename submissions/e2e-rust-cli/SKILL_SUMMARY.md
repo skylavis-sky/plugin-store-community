@@ -2,15 +2,17 @@
 # e2e-rust-cli -- Skill Summary
 
 ## Overview
-This is a simple Rust-based CLI tool designed for end-to-end testing that echoes back any arguments passed to it. It serves as a reference implementation for E2E test plugins and provides a reliable way to test CLI integration functionality.
+This skill provides a Rust-based CLI tool designed for end-to-end testing scenarios. It combines basic echo functionality with cryptocurrency price querying capabilities through onchainos integration, allowing users to test both simple command execution and external API interactions in a unified testing environment.
 
 ## Usage
-Install the `e2e-rust-cli` binary and verify it's available with `which e2e-rust-cli`. Simply run the command with any arguments to see them echoed back.
+Ensure the e2e-rust-cli binary and onchainos CLI are installed and authenticated. Use the tool for testing echo functionality or querying cryptocurrency prices with simple command-line invocations.
 
 ## Commands
-| Command | Description | Example |
-|---------|-------------|---------|
-| `e2e-rust-cli <args>` | Echo back the provided arguments | `e2e-rust-cli hello` outputs "hello" |
+| Command | Description |
+|---------|-------------|
+| `e2e-rust-cli hello world` | Echo arguments back to console |
+| `e2e-rust-cli price ethereum 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee` | Query ETH price via CLI binary |
+| `onchainos market price --address "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599" --chain ethereum` | Query BTC/WBTC price directly through onchainos |
 
 ## Triggers
-An AI agent should activate this skill when testing E2E functionality or when a simple echo command is needed for verification purposes.
+Activate this skill when users need to test basic CLI functionality, query cryptocurrency prices (ETH or BTC), or perform end-to-end testing of Rust CLI applications with external API integrations.
