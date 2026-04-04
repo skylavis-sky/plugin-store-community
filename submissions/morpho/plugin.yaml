@@ -22,8 +22,9 @@ components:
 build:
   lang: rust
   binary_name: morpho
-  source_repo: skylavis-sky/morpho
-  source_commit: "0000000000000000000000000000000000000000"
+  source_repo: skylavis-sky/onchainos-plugins
+  source_commit: "342043164644c4441c083a29c51e371cbe7ee868"
+  source_dir: morpho
 
 api_calls:
   - "https://blue-api.morpho.org/graphql"
