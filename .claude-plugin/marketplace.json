@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "e2e-rust-cli",
-      "description": "E2E test plugin: Rust echo CLI",
+      "description": "E2E test plugin: Rust CLI with onchainos price query",
       "source": "./skills/e2e-rust-cli"
     },
     {
