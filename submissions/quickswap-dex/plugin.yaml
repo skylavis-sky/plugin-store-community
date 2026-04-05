@@ -24,7 +24,7 @@ build:
   lang: rust
   binary_name: quickswap-dex
   source_repo: GeoGu360/onchainos-plugins
-  source_commit: "66953258cc4e269d51289afb9a8de5798ca8b126"
+  source_commit: "739dac101892585bb7246d17180dc844ceffc1aa"
   source_dir: quickswap-dex
 
 api_calls:
