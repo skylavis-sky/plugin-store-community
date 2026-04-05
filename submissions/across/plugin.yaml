@@ -27,6 +27,7 @@ build:
   source_repo: skylavis-sky/onchainos-plugins
   source_commit: 86c9304341a27e2eae53967b6796c5d1de8327bc
   binary_name: across
+  source_dir: across
 
 api_calls:
   - app.across.to
