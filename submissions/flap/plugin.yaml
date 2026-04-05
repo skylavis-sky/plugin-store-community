@@ -24,7 +24,7 @@ build:
   lang: rust
   binary_name: flap
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "0000000000000000000000000000000000000000"
+  source_commit: "4b4a96fd8dc286792fdee548a3e06bdb0d098978"
   source_dir: flap
 
 api_calls:
