@@ -22,7 +22,7 @@ build:
   lang: rust
   binary_name: compound-v3
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "280ef920b9b75ba0dfac83be44748e16f11d9af3"
+  source_commit: "280ef92f696f4c1691f1945ca20d1f8a67be477c"
   source_dir: compound-v3
 
 api_calls:
