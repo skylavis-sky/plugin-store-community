@@ -21,8 +21,8 @@ components:
 build:
   lang: rust
   binary_name: umami-finance
-  source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "ab56b54d22f65f927632e9556d2d08e3bfe5f9cd"
+  source_repo: GeoGu360/onchainos-plugins
+  source_commit: "739dac101892585bb7246d17180dc844ceffc1aa"
   source_dir: umami-finance
 
 api_calls:
