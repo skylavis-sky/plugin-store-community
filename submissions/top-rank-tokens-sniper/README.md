@@ -18,7 +18,7 @@ OKX 涨幅榜狙击手 — 每 10 秒扫描 Solana 1 小时涨幅榜 Top 20，�
 ## Install / 安装
 
 ```bash
-npx skills add okx/plugin-store-community --name top-rank-tokens-sniper
+plugin-store install top-rank-tokens-sniper
 ```
 
 ## Risk Warning / 风险提示

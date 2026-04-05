@@ -21,7 +21,7 @@ Ethereum, Base, Arbitrum, Optimism, Polygon, BNB, Avalanche, Celo, Blast, Zora, 
 ## Install
 
 ```bash
-npx skills add okx/plugin-store-community --name uniswap-ai
+plugin-store install uniswap-ai
 ```
 
 Or install via Claude Marketplace:
