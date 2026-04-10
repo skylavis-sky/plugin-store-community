@@ -26,7 +26,7 @@ build:
   lang: rust
   binary_name: pancakeswap-v2
   source_repo: skylavis-sky/onchainos-plugins
-  source_commit: "a1fadab39b330b1af5a15b50640d94060bff54f6"
+  source_commit: "83b306e1e3ccf4b14fc11a76bd5b906297340ef4"
   source_dir: pancakeswap-v2
 
 api_calls:
