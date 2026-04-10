@@ -4,7 +4,21 @@ description: "Swap tokens and provide full-range liquidity on PancakeSwap V2 —
 license: MIT
 metadata:
   author: skylavis-sky
-  version: "0.1.0"
+  version: "0.2.0"
+---
+
+## Changelog
+
+### v0.2.0 (2026-04-11)
+
+**Bug fixes in `remove-liquidity`:**
+
+1. **`lpBalance` showed zero-address balance in dry-run** — When `--dry-run` was used without `--from`, the wallet was set to `0x0000…0000` for all reads, so `lpBalance` returned whatever LP tokens the zero address holds (typically the locked MINIMUM_LIQUIDITY) instead of the user's real balance. Fixed: dry-run now uses `--from` (if provided) or `onchainos::resolve_wallet` for reads; zero address is only the final fallback when no wallet is available.
+
+2. **`expectedTokenA / expectedTokenB` overflow for large pools** — The formula `reserve * lp_burned / total_supply` used raw `u128` multiplication. For high-liquidity pools (e.g. the BSC BNB/USDT pool with reserves > 10²² raw units), `reserve × lp_burned` overflows u128 (max ~3.4×10³⁸), producing garbage values. Fixed: `safe_mul_div` tries `checked_mul` first and falls back to `f64` arithmetic on overflow, matching the approach already used in `lp-balance`.
+
+Both bugs confirmed fixed via full live-transaction regression test suite (12 tests, BSC + Base, 2026-04-11).
+
 ---
 
 ## Architecture

@@ -100,3 +100,104 @@
 - BSC RPC endpoint (`bsc-rpc.publicnode.com`) is correctly configured per KNOWLEDGE_HUB guidance.
 - `--force` flag is correctly applied in all `wallet_contract_call` invocations (verified in `onchainos.rs`).
 - Dry-run is handled in wrapper layer (not passed to onchainos CLI) per known behavior.
+
+---
+
+---
+
+# Test Results Report — PancakeSwap V2 v0.2.0
+
+- **Date:** 2026-04-11
+- **Tester:** PR_Claw
+- **Plugin:** pancakeswap-v2 v0.2.0
+- **Test chains:** BSC (56), Base (8453)
+- **Wallet:** `0xee385ac7ac70b5e7f12aa49bf879a441bed0bae9`
+- **Compile:** ✅
+
+---
+
+## Context
+
+v0.2.0 fixes two bugs in `remove-liquidity` discovered via user report on 2026-04-10:
+1. `lpBalance` showed zero-address garbage in dry-run instead of user's real LP balance.
+2. `expectedTokenA/B` overflowed u128 for large pools (BSC BNB/USDT ~$17M TVL), producing garbage estimates.
+
+This test run validates the fixes and completes the first full live-transaction coverage of all commands on both chains.
+
+---
+
+## Summary
+
+| Total | L1/L2 Read | L4 Live TX | Failed | Blocked |
+|-------|-----------|------------|--------|---------|
+| 12    | 5 ✅       | 7 ✅        | 0      | 0       |
+
+---
+
+## Track A — BSC (chain 56) — Native BNB path
+
+| # | Scenario | Level | Command | Result | TxHash |
+|---|----------|-------|---------|--------|--------|
+| T1 | Get USDT/BNB pair address | L2 read | `get-pair --token-a USDT --token-b BNB` | ✅ PASS | pair=`0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae` |
+| T2 | Get USDT/BNB reserves | L2 read | `get-reserves --token-a USDT --token-b BNB` | ✅ PASS | reserveA=17.2M USDT, reserveB=28.4K BNB |
+| T3 | Quote 0.001 BNB → USDT | L2 read | `quote --token-in BNB --token-out USDT --amount-in 1000000000000000` | ✅ PASS | amountOut=604467735315342539 (~0.604 USDT) |
+| T4 | LP balance pre-add | L2 read | `lp-balance --token-a USDT --token-b BNB` | ✅ PASS | lpBalance=3978722976785361 (baseline) |
+| T5 | Swap 0.001 BNB → USDT | L4 live | `swap --token-in BNB --token-out USDT --amount-in 1000000000000000` | ✅ PASS | `swapExactETHForTokens` [`0xc5407b46204f7f733e0bb58678786d5ba325744f944cf5065dc765e53da75445`](https://bscscan.com/tx/0xc5407b46204f7f733e0bb58678786d5ba325744f944cf5065dc765e53da75445) |
+| T6 | Add liquidity 0.5 USDT + 0.000825 BNB | L4 live | `add-liquidity --token-a USDT --token-b BNB --amount-a 500000000000000000 --amount-b 825000000000000` | ✅ PASS | `addLiquidityETH` [`0x2c5016143163c5ef471c2b39631c56493617ca5c02bf2417e3a3505d2b6f8cca`](https://bscscan.com/tx/0x2c5016143163c5ef471c2b39631c56493617ca5c02bf2417e3a3505d2b6f8cca) |
+| T7 | LP balance post-add | L2 read | `lp-balance --token-a USDT --token-b BNB` | ✅ PASS | lpBalance=11884600671528879 (up from T4 baseline ✓) |
+| T8 | Remove all USDT/BNB liquidity | L4 live | `remove-liquidity --token-a USDT --token-b BNB` | ✅ PASS | `approve_lp` + `removeLiquidityETH` [`0x855ecdc44c7da4da71180fa34379f09d8ff10bd49d1c03fc27024cef9d9861f0`](https://bscscan.com/tx/0x855ecdc44c7da4da71180fa34379f09d8ff10bd49d1c03fc27024cef9d9861f0) |
+
+**T8 regression check (dry-run with `--from` before live removal):**
+- `lpBalance: 11884600671528879` ✅ — real wallet balance (was `348500000001000` zero-address garbage before fix)
+- `expectedTokenA: 751540052701226112` = 0.7515 USDT ✅ — no overflow (was garbage before fix)
+- `expectedTokenB: 1240209035178087` = 0.001240 BNB ✅ — no overflow (was garbage before fix)
+- Step: `removeLiquidityETH` ✅ — native BNB path selected correctly
+
+**Post-T8 LP balance:** 0 ✅
+
+---
+
+## Track B — Base (chain 8453) — ERC-20 path
+
+| # | Scenario | Level | Command | Result | TxHash |
+|---|----------|-------|---------|--------|--------|
+| T9 | Quote 1 USDC → WETH | L2 read | `--chain 8453 quote --token-in USDC --token-out WETH --amount-in 1000000` | ✅ PASS | amountOut=443231548165516 (~0.000443 WETH) |
+| T10 | Swap 0.03 USDC → WETH | L4 live | `--chain 8453 swap --token-in USDC --token-out WETH --amount-in 30000` | ✅ PASS | `swapExactTokensForTokens` [`0xdc7abc6edaa8c2137238fba0a8b9fc12fcd05ecf69a6ec1e6ca5c264a6444d07`](https://basescan.org/tx/0xdc7abc6edaa8c2137238fba0a8b9fc12fcd05ecf69a6ec1e6ca5c264a6444d07) |
+| T11 | Add liquidity 0.05 USDC + 0.0000223 WETH | L4 live | `--chain 8453 add-liquidity --token-a USDC --token-b WETH --amount-a 50000 --amount-b 22276000000000` | ✅ PASS | `approve_tokenB` + `addLiquidity` [`0x0d7fdb367b832f2dab569b373f7d6b8a369297d0b83d65696efe771e62e32e8e`](https://basescan.org/tx/0x0d7fdb367b832f2dab569b373f7d6b8a369297d0b83d65696efe771e62e32e8e) |
+| T12 | Remove 766474186 USDC/WETH LP | L4 live | `--chain 8453 remove-liquidity --token-a USDC --token-b WETH --liquidity 766474186` | ✅ PASS | `approve_lp` + `removeLiquidity` [`0x8ac59f39cc2f3cf39dbc571bc3d8cfb3591ff987b0d34a8cb4f214e54066c31d`](https://basescan.org/tx/0x8ac59f39cc2f3cf39dbc571bc3d8cfb3591ff987b0d34a8cb4f214e54066c31d) |
+
+**T12 output verification:**
+- `expectedTokenA: 49999` = 0.049999 USDC ✅ (matches T11 input of 50000 minus fees)
+- `expectedTokenB: 22272207889152` ≈ 0.0000223 WETH ✅
+
+**Post-T12 LP balance:** 0 ✅
+
+---
+
+## Code Paths Exercised (v0.2.0, first ever live coverage)
+
+| Selector | Function | Chain | Status |
+|----------|----------|-------|--------|
+| `0x7ff36ab5` | `swapExactETHForTokens` | BSC | ✅ Live |
+| `0x38ed1739` | `swapExactTokensForTokens` | Base | ✅ Live |
+| `0xf305d719` | `addLiquidityETH` | BSC | ✅ Live |
+| `0xe8e33700` | `addLiquidity` | Base | ✅ Live |
+| `0x02751cec` | `removeLiquidityETH` | BSC | ✅ Live |
+| `0xbaa2abde` | `removeLiquidity` | Base | ✅ Live |
+
+---
+
+## Fix Record
+
+| # | Issue | Root Cause | Fix | File |
+|---|-------|-----------|-----|------|
+| 1 | `lpBalance` shows zero-address balance in dry-run | `wallet` always set to `0x0` in dry-run, used for all reads | Resolve real wallet from `--from` / `onchainos::resolve_wallet`; use zero addr only as last resort | `src/commands/remove_liquidity.rs:29-43` |
+| 2 | `expectedTokenA/B` garbage for large pools | `reserve * lp_burned` overflows u128 for pools with reserve > ~10²² raw units | `safe_mul_div()`: `checked_mul` with f64 fallback on overflow | `src/commands/remove_liquidity.rs:207-216` |
+
+---
+
+## Notes
+
+- `--from <address>` is required for all write operations in this environment (onchainos wallet auto-resolution not active). All write commands accept `--from`.
+- BSC native BNB swap/add/remove paths (`swapExactETHForTokens`, `addLiquidityETH`, `removeLiquidityETH`) confirmed live for the first time in this run.
+- `swapExactTokensForETH` (token → native BNB swap) not tested live; selector `0x18cbafe5` was verified in source review.
